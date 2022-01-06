@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "RogueCharacter.generated.h"
 
+class URogueInteractionComponent;
 class UCameraComponent;
 class USpringArmComponent;
 UCLASS()
@@ -21,7 +22,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(VisibleAnywhere)
@@ -30,12 +31,22 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
 
+	FTimerHandle TimerHandle_PrimaryAttack;
+
+	UPROPERTY(VisibleAnywhere)
+	URogueInteractionComponent* InteractionComponent;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	UAnimMontage* AnimMontage;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void MoveRight(float Value);
+	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
+	void PrimaryInteract();
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

@@ -3,6 +3,7 @@
 
 #include "UnrealRoguelike/Public/RogueCharacter.h"
 
+#include "RogueInteractionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -20,6 +21,7 @@ ARogueCharacter::ARogueCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
+	InteractionComponent = CreateDefaultSubobject<URogueInteractionComponent>("InteractionComponent");
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
@@ -49,15 +51,26 @@ void ARogueCharacter::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
-void ARogueCharacter::PrimaryAttack()
+void ARogueCharacter::PrimaryAttack_TimeElapsed()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	
+    	
 	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
+
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
+}
+
+void ARogueCharacter::PrimaryAttack()
+{
+	PlayAnimMontage(AnimMontage);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ARogueCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+}
+
+void ARogueCharacter::PrimaryInteract()
+{
+	InteractionComponent->PrimaryInteract();
 }
 
 // Called to bind functionality to input
@@ -73,6 +86,7 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ARogueCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ARogueCharacter::PrimaryInteract);
 }
 
 void ARogueCharacter::MoveForward(float Value)
