@@ -15,7 +15,7 @@ ARogueExplosiveBarrel::ARogueExplosiveBarrel()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("MeshComponent");
-	RootComponent = MeshComponent
+	RootComponent = MeshComponent;
 
 	RadialForceComponent = CreateDefaultSubobject<URadialForceComponent>("RadialForceComponent");
 	RadialForceComponent->SetupAttachment(RootComponent);

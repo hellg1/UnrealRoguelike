@@ -42,7 +42,6 @@ void ARogueCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FString test = 123;
 }
 
 void ARogueCharacter::MoveRight(float Value)

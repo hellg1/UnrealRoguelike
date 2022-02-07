@@ -9,6 +9,6 @@ public class UnrealRoguelikeTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-		ExtraModuleNames?.AddRange( new[] { "UnrealRoguelike" } );
+		ExtraModuleNames.AddRange( new[] { "UnrealRoguelike" } );
 	}
 }
