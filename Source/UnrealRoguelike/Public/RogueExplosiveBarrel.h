@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ExplosiveBarrel.generated.h"
+#include "RogueExplosiveBarrel.generated.h"
 
 class URadialForceComponent;
 UCLASS()
-class UNREALROGUELIKE_API AExplosiveBarrel : public AActor
+class UNREALROGUELIKE_API ARogueExplosiveBarrel : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AExplosiveBarrel();
+	ARogueExplosiveBarrel();
 
 protected:
 

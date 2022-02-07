@@ -3,10 +3,12 @@
 
 #include "UnrealRoguelike/Public/RogueCharacter.h"
 
+#include "DrawDebugHelpers.h"
 #include "RogueInteractionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ARogueCharacter::ARogueCharacter()
@@ -38,6 +40,9 @@ void ARogueCharacter::BeginPlay()
 void ARogueCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FString test = 123;
 }
 
 void ARogueCharacter::MoveRight(float Value)
