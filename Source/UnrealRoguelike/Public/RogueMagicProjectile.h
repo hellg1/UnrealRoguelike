@@ -17,6 +17,9 @@ class UNREALROGUELIKE_API ARogueMagicProjectile : public AActor
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION()
+	void OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
 	// Sets default values for this actor's properties
 	ARogueMagicProjectile();
 

@@ -6,9 +6,11 @@
 #include "GameFramework/Character.h"
 #include "RogueCharacter.generated.h"
 
+class URogueAttributeComponent;
 class URogueInteractionComponent;
 class UCameraComponent;
 class USpringArmComponent;
+
 UCLASS()
 class UNREALROGUELIKE_API ARogueCharacter : public ACharacter
 {
@@ -35,6 +37,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	URogueInteractionComponent* InteractionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	URogueAttributeComponent* AttributeComponent;
 
 	UPROPERTY(EditAnywhere, Category="Attack")
 	UAnimMontage* AnimMontage;

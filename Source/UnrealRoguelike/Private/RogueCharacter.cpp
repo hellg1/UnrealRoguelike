@@ -3,6 +3,7 @@
 
 #include "UnrealRoguelike/Public/RogueCharacter.h"
 
+#include "RogueAttributeComponent.h"
 #include "RogueInteractionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -22,6 +23,8 @@ ARogueCharacter::ARogueCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
 	InteractionComponent = CreateDefaultSubobject<URogueInteractionComponent>("InteractionComponent");
+
+	AttributeComponent=CreateDefaultSubobject<URogueAttributeComponent>("AttributeComponent");
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;

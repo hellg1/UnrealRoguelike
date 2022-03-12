@@ -27,6 +27,8 @@ void URogueInteractionComponent::PrimaryInteract()
 	FRotator EyesRotation;
 	MyOwner->GetActorEyesViewPoint(EyesLocation, EyesRotation);
 
+	
+
 	FVector End = EyesLocation + (EyesRotation.Vector()*1000);
 
 	//FHitResult Hit;
