@@ -12,7 +12,7 @@
 void ARogueMagicProjectile::OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
 	UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	if (Actor)
+	if (Actor && Actor != GetInstigator())
 	{
 		URogueAttributeComponent* AttributeComponent = Cast<URogueAttributeComponent>(Actor->GetComponentByClass(URogueAttributeComponent::StaticClass()));
 		if (AttributeComponent)
