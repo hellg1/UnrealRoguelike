@@ -3,10 +3,25 @@
 
 #include "RogueMagicProjectile.h"
 
+#include "RogueAttributeComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
+
+void ARogueMagicProjectile::OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor,
+	UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
+{
+	if (Actor && Actor != GetInstigator())
+	{
+		URogueAttributeComponent* AttributeComponent = Cast<URogueAttributeComponent>(Actor->GetComponentByClass(URogueAttributeComponent::StaticClass()));
+		if (AttributeComponent)
+		{
+			AttributeComponent->ApplyHealthChanges(-20.f);
+			Destroy();
+		}
+	}
+}
 
 // Sets default values
 ARogueMagicProjectile::ARogueMagicProjectile()
@@ -16,6 +31,7 @@ ARogueMagicProjectile::ARogueMagicProjectile()
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComponent->SetCollisionProfileName("Projectile");
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ARogueMagicProjectile::OnActorOverlap);
 	RootComponent = SphereComponent;
 
 	EffectComponent = CreateDefaultSubobject<UParticleSystemComponent>("EffectComponent");
