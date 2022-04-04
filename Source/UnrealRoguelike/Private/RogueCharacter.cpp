@@ -57,16 +57,47 @@ void ARogueCharacter::MoveRight(float Value)
 	AddMovementInput(RightVector, Value);
 }
 
-void ARogueCharacter::PrimaryAttack_TimeElapsed()
+void ARogueCharacter::SpawnProjectile(TSubclassOf<AActor> SpawnClass)
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-    	
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParameters.Instigator = this;
+	if (ensure(SpawnClass))
+	{
+		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParameters.Instigator = this;
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParameters);
+		FCollisionShape Shape;
+		Shape.SetSphere(20.f);
+
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+
+		FCollisionObjectQueryParams ObjParams;
+		ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
+
+		FVector TraceStart = CameraComponent->GetComponentLocation();
+		FVector TraceEnd = CameraComponent->GetComponentLocation() + (GetControlRotation().Vector()*5000.f);
+
+		FHitResult Hit;
+
+		FRotator ProjRotation;
+		if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, Params))
+		{
+			// Adjust location to end up at crosshair look-at
+			ProjRotation = FRotationMatrix::MakeFromX(Hit.ImpactPoint - HandLocation).Rotator();
+		}
+		else
+		{
+			// Fall-back since we failed to find any blocking hit
+			ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
+		}
+		
+		FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
+		GetWorld()->SpawnActor<AActor>(SpawnClass, SpawnTM, SpawnParameters);
+	}
 }
 
 void ARogueCharacter::PrimaryAttack()
@@ -75,9 +106,37 @@ void ARogueCharacter::PrimaryAttack()
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ARogueCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 }
 
+void ARogueCharacter::Dash_TimeElapsed()
+{
+	SpawnProjectile(DashClass);
+}
+
+void ARogueCharacter::Dash()
+{
+	PlayAnimMontage(AnimMontage);
+	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &ARogueCharacter::Dash_TimeElapsed, 0.2f);
+}
+
+void ARogueCharacter::Blackhole_TimeElapsed()
+{
+	SpawnProjectile(BlackholeClass);
+}
+
+void ARogueCharacter::Blackhole()
+{
+	PlayAnimMontage(AnimMontage);
+	GetWorldTimerManager().SetTimer(TimerHandle_Blackhole, this, &ARogueCharacter::Blackhole_TimeElapsed, 0.2f);
+}
+
+void ARogueCharacter::PrimaryAttack_TimeElapsed()
+{
+	SpawnProjectile(ProjectileClass);
+}
+
 void ARogueCharacter::PrimaryInteract()
 {
-	InteractionComponent->PrimaryInteract();
+	if (InteractionComponent)
+		InteractionComponent->PrimaryInteract();
 }
 
 // Called to bind functionality to input
@@ -92,6 +151,8 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ARogueCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ARogueCharacter::Blackhole);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ARogueCharacter::Dash);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ARogueCharacter::PrimaryInteract);
 }
