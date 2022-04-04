@@ -20,12 +20,21 @@ public:
 	// Sets default values for this character's properties
 	ARogueCharacter();
 
+	UPROPERTY(EditAnywhere)
+	FString MyString = TEXT("");
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<AActor> DashClass;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<AActor> BlackholeClass;
 
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
@@ -43,14 +52,21 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Attack")
 	UAnimMontage* AnimMontage;
+	FTimerHandle TimerHandle_Dash;
+	FTimerHandle TimerHandle_Blackhole;
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void MoveRight(float Value);
+	void SpawnProjectile(TSubclassOf<AActor> SpawnClass);
 	void PrimaryAttack_TimeElapsed();
 	void PrimaryAttack();
+	void Dash_TimeElapsed();
+	void Dash();
+	void Blackhole_TimeElapsed();
+	void Blackhole();
 	void PrimaryInteract();
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
