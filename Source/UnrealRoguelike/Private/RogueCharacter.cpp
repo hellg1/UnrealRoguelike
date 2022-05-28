@@ -38,6 +38,22 @@ void ARogueCharacter::BeginPlay()
 	
 }
 
+void ARogueCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComponent->OnHealthChanged.AddDynamic(this, &ARogueCharacter::OnHealthChanged);
+}
+
+void ARogueCharacter::OnHealthChanged(AActor* InstigatorActor, URogueAttributeComponent* OwningComp, float Health, float Delta)
+{
+	if (Health<=0.f && Delta < 0.f)
+	{
+		APlayerController* MyPC = Cast<APlayerController>(GetController());
+		DisableInput(MyPC);
+	}
+}
+
 // Called every frame
 void ARogueCharacter::Tick(float DeltaTime)
 {

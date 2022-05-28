@@ -27,6 +27,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+	
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, URogueAttributeComponent* OwningComp, float Health, float Delta);
+
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
